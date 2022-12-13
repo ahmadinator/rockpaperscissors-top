@@ -4,9 +4,36 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Rock Paper Scissors</title>
+
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    
+    <div class="profile plr">
+        <h1 class="name">You</h1>
+        <h2 class="score plr">0</h2>
+    </div>
+    <div id="center">
+        <div id="set-top">
+            <h1>Rock Paper Scissors</h1>
+            <h2>Choose your weapon</h2>
+            <div class="choices plr">
+                <button id="choicerock">👊</button>
+                <button id="choicepaper">✋</button>
+                <button id="choicescissors">✌️</button>
+            </div>
+            <div>
+                <label for="number-round">Number of rounds </label>
+                <input type="number" id="number-round" value=5>
+            </div>
+            <button id="playbtn">Play again / reset</button>
+        </div>
+        <h1 id="chooser">Game didn't start yet</h1>
+    </div>
+    <div class="profile pc">
+        <h1 class="name">P.C</h1>
+        <h2 class="score pc">0</h2>
+    </div>
+    <script src="./main.js"></script>
 </body>
 </html>

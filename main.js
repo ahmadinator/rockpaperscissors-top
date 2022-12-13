@@ -1,35 +1,67 @@
-let totalRounds = 5
-let wins = 0
+let playbtn = document.querySelector("#playbtn")
+let roundNumInput = document.querySelector("#number-round")
+let plrScore = document.querySelector(".score.plr")
+let pcScore = document.querySelector(".score.pc")
+let chooser = document.querySelector("#chooser")
 
 let RPS = ["Rock", "Paper", "Scissors"]
 let RPSR = {"Paper" : 1, "Scissors" : 2, "Rock" : 3}
 let getComputerChoice = () => {return RPS[Math.floor(Math.random() * RPS.length)]}
 
-function playRound(playerSelection, computerSelection) {
-    playerSelection =  (playerSelection.substring(0,1)).toUpperCase() + (playerSelection.substring(1,playerSelection.length)).toLowerCase()
+const queryString = window.location.search
+const urlParams = new URLSearchParams(queryString)
 
-    return (playerSelection == computerSelection) ? "It's a tie!"
-        :  (playerSelection == "Paper" && computerSelection == "Rock") ? `You Win! ${playerSelection} beats ${computerSelection}`
-        :  (playerSelection == "Rock" && computerSelection == "Paper") ? `You Lose! ${computerSelection} beats ${playerSelection}`
-        :  (RPSR[playerSelection] > RPSR[computerSelection]) ? `You Win! ${playerSelection} beats ${computerSelection}` : `You Lose! ${computerSelection} beats ${playerSelection}`
+let maxRounds = urlParams.get("rounds") || 5
+let roundsPlayed = 0
+let wins = 0
+let pcwins = 0
+
+roundNumInput.value = maxRounds
+
+let gameEnded = function() {
+    chooser.textContent = (pcwins == wins) ? "Game ended! It's a tie!"
+                        : (wins > pcwins) ? "Game ended! You win!" : "Game ended! You lose!"
 }
 
-function game() {
-    wins = 0
-    for (let i = 0; i <= totalRounds; i++) {
-        let playerChoice = prompt("Type scissors, paper or rock!")
-        let result = playRound(playerChoice, getComputerChoice())
-        console.log(result)
-        wins += (result.includes("Win")) ? 1 : 0
-        if (totalRounds == i) {
-            if (wins > totalRounds/2) {
-                console.log(`You have won the game with ${wins} Wins!`)
-            } else if (wins < totalRounds/2) {
-                console.log(`You have lost the game with ${wins} Wins!`)
-            } else {
-                console.log("Game ended with a tie!")
-            }
-        }
+let playerPlayed = function(playerSelection) {
+    if (roundsPlayed >= maxRounds) { gameEnded(); return }
+    roundsPlayed++
+
+    let win = false
+    let tie = false
+    let computerSelection = getComputerChoice()
+
+    win = (playerSelection == computerSelection) ? false
+        :  (playerSelection == "Paper" && computerSelection == "Rock") ? true
+        :  (playerSelection == "Rock" && computerSelection == "Paper") ? false
+        :  (RPSR[playerSelection] > RPSR[computerSelection]) ? true : false
+
+    tie = (playerSelection == computerSelection) ? true : false
+
+    if (win) {
+        wins++
+        plrScore.textContent = String(wins)
+        chooser.textContent = `You Win! ${playerSelection} beats ${computerSelection}`
+    } else if (tie) {
+        chooser.textContent = "It's a tie!"
+    } else {
+        pcwins++
+        pcScore.textContent = String(pcwins)
+        chooser.textContent = `You Lose! ${computerSelection} beats ${playerSelection}`
     }
-};
-game()
+}
+
+document.querySelector("#choicerock").onclick = function(){ playerPlayed("Rock") }
+document.querySelector("#choicepaper").onclick = function(){ playerPlayed("Paper") }
+document.querySelector("#choicescissors").onclick = function(){ playerPlayed("Scissors") }
+
+playbtn.onclick = function() {
+    let roundInput = roundNumInput.value
+    if (Number(roundInput)) {
+        urlParams.delete("rounds")
+        urlParams.append("rounds", String(roundInput))
+        window.location.href = window.location.pathname +"?"+ urlParams.toString()
+        return
+    }
+    window.location.reload()
+}
